@@ -1,7 +1,6 @@
 package com.akmade.util.test;
 
 import com.akmade.util.Reply;
-import net.jcip.annotations.ThreadSafe;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -10,11 +9,8 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.function.Predicate;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class ReplyTest {
 
@@ -298,7 +294,7 @@ public class ReplyTest {
 
         results = Reply.<Integer>empty().or(() -> Reply.of(5));
         assertTrue(results.isPresent());
-        assertEquals((Integer)1, results.get());
+        assertEquals((Integer)5, results.get());
     }
 
     @Test
