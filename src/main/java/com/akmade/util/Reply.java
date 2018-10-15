@@ -40,7 +40,7 @@ public class Reply<T> {
      */
     private Reply(Collection<String> messages) {
         this.object = null;
-        this.messages = messages;
+        this.messages = Objects.requireNonNull(messages);
     }
 
     /**
@@ -59,6 +59,7 @@ public class Reply<T> {
      * @return an empty {@code Reply}
      */
     public static <T> Reply<T> empty(String message) {
+        Objects.requireNonNull(message);
         return empty(new ArrayList<String>(){{add(message);}});
     }
 
@@ -84,6 +85,55 @@ public class Reply<T> {
      */
     public static <T> Reply<T> of(T value) {
         return new Reply<>(value);
+    }
+
+    /**
+     * Returns an {@code Reply} describing the given non-{@code null}
+     * {@link Optional} value, containing the value from the {@code Optional}
+     * or an empty containing the messages.
+     *
+     * @param optional the value to describe, which must be non-{@code null}
+     * @param messages the messages to assign to empty if no value is in the optional
+     * @param <T> the type of the value
+     * @return an {@code Reply} with the value contained in the {@code Optional}, or empty with the messages
+     * if the {@code Optional} contains no object.
+     * @throws NullPointerException if optional is {@code null}
+     */
+    public static <T> Reply<T> ofOptional(Optional<T> optional, Collection<String> messages) {
+        Objects.requireNonNull(optional);
+        return optional.map(Reply::of)
+                .orElse(Reply.empty(messages));
+    }
+
+    /**
+     * Returns an {@code Reply} describing the given non-{@code null}
+     * {@link Optional} value, containing the value from the {@code Optional}
+     * or an empty containing the message.
+     *
+     * @param optional the value to describe, which must be non-{@code null}
+     * @param message the messages to assign to empty if no value is in the optional
+     * @param <T> the type of the value
+     * @return an {@code Reply} with the value contained in the {@code Optional}, or empty with the message
+     * if the {@code Optional} contains no object.
+     * @throws NullPointerException if optional is {@code null}
+     */
+    public static <T> Reply<T> ofOptional(Optional<T> optional, String message) {
+        return ofOptional(optional, new ArrayList<String>(){{add(message);}});
+    }
+
+    /**
+     * Returns an {@code Reply} describing the given non-{@code null}
+     * {@link Optional} value, containing the value from the {@code Optional}
+     * or the default messages.
+     *
+     * @param optional the value to describe, which must be non-{@code null}
+     * @param <T> the type of the value
+     * @return an {@code Reply} with the value contained in the {@code Optional}, or empty if the {@code Optional} contains no object.
+     * @throws NullPointerException if optional is {@code null}
+     */
+    @SuppressWarnings("")
+    public static <T> Reply<T> ofOptional(Optional<T> optional) {
+        return ofOptional(optional, EMPTY_MESSAGE);
     }
 
     /**
