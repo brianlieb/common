@@ -29,12 +29,12 @@ public final class Message {
   static {
     java.lang.String[] descriptorData = {
       "\n\rMessage.proto\022\027com.akmade.common.proto" +
-      "\032\036google/protobuf/wrappers.proto\"\214\001\n\003Msg" +
+      "\032\036google/protobuf/wrappers.proto\"\232\001\n\003Msg" +
       "\0227\n\010severity\030\001 \001(\0162%.com.akmade.common.p" +
-      "roto.Msg.Severity\022\017\n\007message\030\002 \001(\t\";\n\010Se" +
-      "verity\022\010\n\004INFO\020\000\022\013\n\007WARNING\020\001\022\t\n\005ERROR\020\002" +
-      "\022\r\n\tEXCEPTION\020\003B\033\n\027com.akmade.common.pro" +
-      "toP\001b\006proto3"
+      "roto.Msg.Severity\022\014\n\004code\030\003 \001(\003\022\017\n\007messa" +
+      "ge\030\002 \001(\t\";\n\010Severity\022\010\n\004INFO\020\000\022\013\n\007WARNIN" +
+      "G\020\001\022\t\n\005ERROR\020\002\022\r\n\tEXCEPTION\020\003B\033\n\027com.akm" +
+      "ade.common.protoP\001b\006proto3"
     };
     com.google.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new com.google.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -54,7 +54,7 @@ public final class Message {
     internal_static_com_akmade_common_proto_Msg_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_com_akmade_common_proto_Msg_descriptor,
-        new java.lang.String[] { "Severity", "Message", });
+        new java.lang.String[] { "Severity", "Code", "Message", });
     com.google.protobuf.WrappersProto.getDescriptor();
   }
 

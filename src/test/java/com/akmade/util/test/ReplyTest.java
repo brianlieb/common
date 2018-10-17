@@ -1,5 +1,6 @@
 package com.akmade.util.test;
 
+import com.akmade.common.proto.Msg;
 import com.akmade.util.Reply;
 import org.junit.Test;
 
@@ -10,6 +11,7 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+import static com.akmade.util.MessageUtility.MAKE_ERROR;
 import static org.junit.Assert.*;
 
 public class ReplyTest {
@@ -68,21 +70,37 @@ public class ReplyTest {
         assertTrue(reply.messages().stream().anyMatch(m -> m.equals(Reply.EMPTY_MESSAGE)));
         assert(replyHasNoObject(reply));
 
-        String error = "Error Message";
+        Msg error = MAKE_ERROR.apply("Error Message");
         Reply<Integer> reply2 = Reply.empty(error);
         assertFalse(reply2.isPresent());
         assertTrue(reply2.messages().size() == 1);
         assertTrue(reply2.messages().stream().anyMatch(m -> m.equals(error)));
         assert(replyHasNoObject(reply2));
 
-        String error2 = "Error Message 2";
-        Collection<String> errors = new ArrayList<String>(){{add(error); add(error2);}};
+        Msg error2 =  MAKE_ERROR.apply("Error Message 2");
+        Collection<Msg> errors = new ArrayList<Msg>(){{add(error); add(error2);}};
         Reply<Integer> reply3 = Reply.empty(errors);
         assertFalse(reply3.isPresent());
         assertEquals(2, reply3.messages().size());
         assertTrue(reply3.messages().stream().anyMatch(m -> m.equals(error)));
         assertTrue(reply3.messages().stream().anyMatch(m -> m.equals(error2)));
         assert(replyHasNoObject(reply3));
+
+
+        Reply<Integer> reply4 = Reply.empty(error, error2);
+        assertFalse(reply4.isPresent());
+        assertEquals(2, reply4.messages().size());
+        assertTrue(reply4.messages().stream().anyMatch(m -> m.equals(error)));
+        assertTrue(reply4.messages().stream().anyMatch(m -> m.equals(error2)));
+        assert(replyHasNoObject(reply4));
+
+
+        Reply<Integer> reply5 = Reply.empty(error, error2);
+        assertFalse(reply5.isPresent());
+        assertEquals(2, reply5.messages().size());
+        assertTrue(reply5.messages().stream().anyMatch(m -> m.equals(error)));
+        assertTrue(reply5.messages().stream().anyMatch(m -> m.equals(error2)));
+        assert(replyHasNoObject(reply5));
     }
 
     @Test
@@ -129,16 +147,16 @@ public class ReplyTest {
 
     @Test
     public void messagesTest() {
-        String error = "Error 1";
-        String error2 = "Error 2";
-        Collection<String> messages = new ArrayList<String>(){{add(error); add(error2);}};
+        Msg error = MAKE_ERROR.apply("Error 1");
+        Msg error2 = MAKE_ERROR.apply("Error 2");
+        Collection<Msg> messages = new ArrayList<Msg>(){{add(error); add(error2);}};
         Reply<Integer> reply = Reply.of(1);
         try {
             reply.messages();
         } catch (NoSuchElementException e) {
             assert(true);
         }
-        Collection<String> results = reply.messagesOrElse(messages);
+        Collection<Msg> results = reply.messagesOrElse(messages);
         assertEquals(2, results.size());
         assertTrue(results.stream().anyMatch(m -> m.equals(error)));
         assertTrue(results.stream().anyMatch(m -> m.equals(error2)));
@@ -194,10 +212,10 @@ public class ReplyTest {
 
     @Test
     public void filterTest() {
-        String error = "Error 1";
-        String error2 = "Error 2";
-        String error3 = null;
-        Collection<String> messages = new ArrayList<String>(){{add(error); add(error2);}};
+        Msg error = MAKE_ERROR.apply("Error 1");
+        Msg error2 = MAKE_ERROR.apply("Error 2");
+        Msg error3 = null;
+        Collection<Msg> messages = new ArrayList<Msg>(){{add(error); add(error2);}};
 
 
         Reply<Integer> reply = Reply.of(6);
@@ -240,7 +258,7 @@ public class ReplyTest {
 
     @Test
     public void mapTest() {
-        String error = "Error ";
+        Msg error = MAKE_ERROR.apply("Error ");
         Function<String, Integer> mapper = Integer::valueOf;
         Reply<Integer> results = Reply.of("10").map(mapper);
         assertTrue(results.isPresent());
@@ -252,7 +270,7 @@ public class ReplyTest {
 
     @Test
     public void flatMapTest() {
-        String error = "Can't map to Integer";
+        Msg error = MAKE_ERROR.apply("Can't map to Integer");
 
         Function<String, Reply<Integer>> mapper =
                 s ->
@@ -306,9 +324,9 @@ public class ReplyTest {
     @Test
     public void ofOptional() {
         Integer nullInt = null;
-        String error = "Error 1";
-        String error2 = "Error 2";
-        Collection<String> messages = new ArrayList<String>(){{add(error); add(error2);}};
+        Msg error = MAKE_ERROR.apply("Error 1");
+        Msg error2 = MAKE_ERROR.apply("Error 2");
+        Collection<Msg> messages = new ArrayList<Msg>(){{add(error); add(error2);}};
 
         Reply<Integer> reply = Reply.ofOptional(Optional.of(3));
         assertTrue (reply.isPresent());

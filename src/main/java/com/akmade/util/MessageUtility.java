@@ -1,6 +1,7 @@
 package com.akmade.util;
 
-import com.akmade.protobuf.Msg;
+
+import com.akmade.common.proto.Msg;
 import io.vavr.Function2;
 
 import java.util.ArrayList;
@@ -18,28 +19,28 @@ public class MessageUtility {
                 return collection;
             };
 
-    public static final Function<String, Msg> makeError =
+    public static final Function<String, Msg> MAKE_ERROR =
             s -> makeMessage.apply(Msg.Severity.ERROR, s);
 
-    public static final Function<String, Collection<Msg>> makeErrors =
+    public static final Function<String, Collection<Msg>> MAKE_ERRORS =
             s -> makeMessages.apply(Msg.Severity.ERROR, s);
 
-    public static final Function<String, Msg> makeWarning =
+    public static final Function<String, Msg> MAKE_WARNING =
             s -> makeMessage.apply(Msg.Severity.WARNING, s);
 
-    public static final Function<String, Collection<Msg>> makeWarnings =
+    public static final Function<String, Collection<Msg>> MAKE_WARNINGS =
             s -> makeMessages.apply(Msg.Severity.WARNING, s);
 
-    public static final Function<String, Msg> makeException =
+    public static final Function<String, Msg> MAKE_EXCEPTION =
             s -> makeMessage.apply(Msg.Severity.EXCEPTION, s);
 
-    public static final Function<String,  Collection<Msg>> makeExceptions =
+    public static final Function<String,  Collection<Msg>> MAKE_EXCEPTIONS =
             s -> makeMessages.apply(Msg.Severity.EXCEPTION, s);
 
-    public static final Function<String, Msg> makeInfo =
+    public static final Function<String, Msg> MAKE_INFO =
             s -> makeMessage.apply(Msg.Severity.INFO, s);
 
-    public static final Function<String, Collection<Msg>> makeInfos =
+    public static final Function<String, Collection<Msg>> MAKE_INFOS =
             s -> makeMessages.apply(Msg.Severity.INFO, s);
 
 }

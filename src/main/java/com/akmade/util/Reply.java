@@ -1,11 +1,16 @@
 package com.akmade.util;
 
+import com.akmade.common.proto.Msg;
+
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static com.akmade.util.MessageUtility.MAKE_ERROR;
 
 /**
  * A Reply is a form of an optional, but it contains a collection of Strings
@@ -13,16 +18,16 @@ import java.util.stream.Stream;
  * @param <T> - The type of object contained in the Reply.
  */
 public class Reply<T> {
-    public static final String EMPTY_MESSAGE = "There is no object";
+    public static final Msg EMPTY_MESSAGE = MAKE_ERROR.apply("There is no object");
     private T object;
-    private Collection<String> messages;
+    private Collection<Msg> messages;
 
     /**
      * Constructs an empty instance, with a default message.
      */
     private Reply() {
         this.object = null;
-        messages = new ArrayList<String>(){{add(EMPTY_MESSAGE);}};
+        messages = new ArrayList<Msg>(){{add(EMPTY_MESSAGE);}};
     }
 
     /**
@@ -38,7 +43,7 @@ public class Reply<T> {
      * Constructs an empty instance, with the passed in Messages as the messages.
      * @param messages A {@link Collection} of messages.
      */
-    private Reply(Collection<String> messages) {
+    private Reply(Collection<Msg> messages) {
         this.object = null;
         this.messages = Objects.requireNonNull(messages);
     }
@@ -53,25 +58,29 @@ public class Reply<T> {
     }
 
     /**
-     * Creates an empty instance with the message as the only message in the Collection
-     * @param message - The message to set as the only message
+     * Creates an empty instance with the varargs messages as the messages in the Collection
+     * @param messages - The varargs messages to set as the only message
      * @param <T> - The type of the non-existent value
      * @return an empty {@code Reply}
      */
-    public static <T> Reply<T> empty(String message) {
-        Objects.requireNonNull(message);
-        return empty(new ArrayList<String>(){{add(message);}});
+    @SafeVarargs
+    @SuppressWarnings("unchecked")
+    public static <T> Reply<T> empty(Msg...messages) {
+        return empty(Arrays.asList(messages));
     }
 
     /**
-     * Creates an empty instance with the messages as the only {@code Reply} messages
+     *  Creates an empty instance with the varargs messages as the only {@code Reply} messages
      *
-     * @param messages - The {@link Collection} of messages
+     * @param messages - a varargs of Collections of Messages
      * @param <T> - The type of the non-existent value
      * @return an empty {@code Reply}
      */
-    public static <T> Reply<T> empty(Collection<String> messages) {
-        return new Reply<>(messages);
+    @SafeVarargs
+    public static <T> Reply<T> empty(Collection<Msg>...messages) {
+        return new Reply<>(Arrays.stream(messages)
+                .flatMap(Collection::stream)
+                .collect(Collectors.toList()));
     }
 
     /**
@@ -99,7 +108,7 @@ public class Reply<T> {
      * if the {@code Optional} contains no object.
      * @throws NullPointerException if optional is {@code null}
      */
-    public static <T> Reply<T> ofOptional(Optional<T> optional, Collection<String> messages) {
+    public static <T> Reply<T> ofOptional(Optional<T> optional, Collection<Msg> messages) {
         Objects.requireNonNull(optional);
         return optional.map(Reply::of)
                 .orElse(Reply.empty(messages));
@@ -117,8 +126,8 @@ public class Reply<T> {
      * if the {@code Optional} contains no object.
      * @throws NullPointerException if optional is {@code null}
      */
-    public static <T> Reply<T> ofOptional(Optional<T> optional, String message) {
-        return ofOptional(optional, new ArrayList<String>(){{add(message);}});
+    public static <T> Reply<T> ofOptional(Optional<T> optional, Msg message) {
+        return ofOptional(optional, new ArrayList<Msg>(){{add(message);}});
     }
 
     /**
@@ -199,7 +208,7 @@ public class Reply<T> {
      * @return the non-{@code null} messages
      * @throws NoSuchElementException if no value is present
      */
-    public Collection<String> messages() {
+    public Collection<Msg> messages() {
         if (messages == null)
             throw new NoSuchElementException("There are no messages");
         return messages;
@@ -212,7 +221,7 @@ public class Reply<T> {
      *        May be {@code null}.
      * @return the messages, if present, otherwise {@code messages}
      */
-    public Collection<String> messagesOrElse(Collection<String> messages) {
+    public Collection<Msg> messagesOrElse(Collection<Msg> messages) {
         if (this.messages == null)
             return messages;
         return this.messages;
@@ -227,7 +236,7 @@ public class Reply<T> {
      * @throws NullPointerException if no messages are present and the supplying
      *         function is {@code null}
      */
-    public Collection<String> messagesOrElseGet(Supplier<Collection<String>> supplier) {
+    public Collection<Msg> messagesOrElseGet(Supplier<Collection<Msg>> supplier) {
         return messagesOrElse(supplier.get());
     }
 
@@ -279,7 +288,7 @@ public class Reply<T> {
      *         given predicate, otherwise an empty {@code Reply} with the message.
      * @throws NullPointerException if the predicate is {@code null}
      */
-    public Reply<T> filter(Predicate<T> predicate, String message) {
+    public Reply<T> filter(Predicate<T> predicate, Msg message) {
         Objects.requireNonNull(predicate);
         if (!isPresent()) {
             return empty(message);
@@ -300,7 +309,7 @@ public class Reply<T> {
      *         given predicate, otherwise an empty {@code Reply} with the messages.
      * @throws NullPointerException if the predicate is {@code null}
      */
-    public Reply<T> filter(Predicate<T> predicate, Collection<String> messages) {
+    public Reply<T> filter(Predicate<T> predicate, Collection<Msg> messages) {
         Objects.requireNonNull(predicate);
         if (!isPresent()) {
             return empty(messages);

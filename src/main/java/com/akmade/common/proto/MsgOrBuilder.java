@@ -17,6 +17,11 @@ public interface MsgOrBuilder extends
   com.akmade.common.proto.Msg.Severity getSeverity();
 
   /**
+   * <code>int64 code = 3;</code>
+   */
+  long getCode();
+
+  /**
    * <code>string message = 2;</code>
    */
   java.lang.String getMessage();

@@ -1,27 +1,27 @@
 package com.akmade.util;
 
-import com.akmade.protobuf.Msg;
-import io.vavr.control.Either;
+import com.akmade.common.proto.Msg;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Optional;
 
 public class ServicePackage<T> {
 
     T object;
-    Collection<Msg> msg;
+    Collection<Msg> msg = new ArrayList<>();
 
     private ServicePackage(T object, Collection<Msg> msg) {
         this.object = object;
         this.msg = msg;
     }
 
-    public static <X> ServicePackage<X> of(Either<Collection<Msg>, X> either, X start) {
-        return new ServicePackage<>(either.getOrElse(start), either.getLeft());
+    public static <X> ServicePackage<X> of(Reply<X> reply, X start) {
+        return new ServicePackage<>(reply.orElse(start), reply.messagesOrElse(new ArrayList<>()));
     }
 
-    public static <X> ServicePackage<X> ofOptional(Either<Collection<Msg>, Optional<X>> either, X start) {
-        return new ServicePackage<>(either.getOrElse(Optional.empty()).orElse(start), either.getLeft());
+    public static <X> ServicePackage<X> ofOptional(Reply<Optional<X>> reply, X start) {
+        return new ServicePackage<>(reply.orElse(Optional.empty()).orElse(start), reply.messagesOrElse(new ArrayList<>()));
     }
 
 

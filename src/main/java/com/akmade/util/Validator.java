@@ -1,9 +1,8 @@
 package com.akmade.util;
 
-import com.akmade.protobuf.Msg;
+import com.akmade.common.proto.Msg;
 import io.vavr.Function2;
-import io.vavr.collection.Seq;
-import io.vavr.control.Either;
+
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -25,25 +24,21 @@ public class Validator<T> {
     }
 
 
-    private Function2<ValidationItem, T, Either<Msg, T>> makeValidation =
+    private Function2<ValidationItem, T, Reply<T>> makeValidation =
             (validationItem, t) ->
                 validationItem.predicate.test(t)
-                        ? Either.right(t)
-                        : Either.left(validationItem.msg);
+                        ? Reply.of(t)
+                        : Reply.empty(validationItem.msg);
 
 
-    private Function<Seq<T>, T> reduce =
-        ts -> ts.toJavaStream().reduce((t1, t2) -> t1).orElse(null);
-
-    private Function<Seq<Msg>, Collection<Msg>> makeCollection = Seq::asJava;
-
-    public Either<Collection<Msg>, T> validate(T t) {
-              return Either.sequence(items.stream()
+    public Reply<T> validate(T t) {
+              return items.stream()
                     .map(i -> makeValidation.apply(i))
                     .map(v -> v.apply(t))
-                    .collect(Collectors.toList()))
-                      .map(reduce)
-                      .mapLeft(makeCollection);
+                    .reduce((r1, r2) ->  (r1.isPresent()&&r2.isPresent())
+                                        ? r1
+                                        : Reply.empty(r1.messagesOrElseGet(ArrayList::new), r1.messagesOrElseGet(ArrayList::new)))
+                      .orElse(Reply.empty());
     }
 
 

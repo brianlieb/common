@@ -17,6 +17,7 @@ private static final long serialVersionUID = 0L;
   }
   private Msg() {
     severity_ = 0;
+    code_ = 0L;
     message_ = "";
   }
 
@@ -61,6 +62,11 @@ private static final long serialVersionUID = 0L;
             java.lang.String s = input.readStringRequireUtf8();
 
             message_ = s;
+            break;
+          }
+          case 24: {
+
+            code_ = input.readInt64();
             break;
           }
         }
@@ -219,6 +225,15 @@ private static final long serialVersionUID = 0L;
     return result == null ? com.akmade.common.proto.Msg.Severity.UNRECOGNIZED : result;
   }
 
+  public static final int CODE_FIELD_NUMBER = 3;
+  private long code_;
+  /**
+   * <code>int64 code = 3;</code>
+   */
+  public long getCode() {
+    return code_;
+  }
+
   public static final int MESSAGE_FIELD_NUMBER = 2;
   private volatile java.lang.Object message_;
   /**
@@ -271,6 +286,9 @@ private static final long serialVersionUID = 0L;
     if (!getMessageBytes().isEmpty()) {
       com.google.protobuf.GeneratedMessageV3.writeString(output, 2, message_);
     }
+    if (code_ != 0L) {
+      output.writeInt64(3, code_);
+    }
     unknownFields.writeTo(output);
   }
 
@@ -285,6 +303,10 @@ private static final long serialVersionUID = 0L;
     }
     if (!getMessageBytes().isEmpty()) {
       size += com.google.protobuf.GeneratedMessageV3.computeStringSize(2, message_);
+    }
+    if (code_ != 0L) {
+      size += com.google.protobuf.CodedOutputStream
+        .computeInt64Size(3, code_);
     }
     size += unknownFields.getSerializedSize();
     memoizedSize = size;
@@ -303,6 +325,8 @@ private static final long serialVersionUID = 0L;
 
     boolean result = true;
     result = result && severity_ == other.severity_;
+    result = result && (getCode()
+        == other.getCode());
     result = result && getMessage()
         .equals(other.getMessage());
     result = result && unknownFields.equals(other.unknownFields);
@@ -318,6 +342,9 @@ private static final long serialVersionUID = 0L;
     hash = (19 * hash) + getDescriptor().hashCode();
     hash = (37 * hash) + SEVERITY_FIELD_NUMBER;
     hash = (53 * hash) + severity_;
+    hash = (37 * hash) + CODE_FIELD_NUMBER;
+    hash = (53 * hash) + com.google.protobuf.Internal.hashLong(
+        getCode());
     hash = (37 * hash) + MESSAGE_FIELD_NUMBER;
     hash = (53 * hash) + getMessage().hashCode();
     hash = (29 * hash) + unknownFields.hashCode();
@@ -451,6 +478,8 @@ private static final long serialVersionUID = 0L;
       super.clear();
       severity_ = 0;
 
+      code_ = 0L;
+
       message_ = "";
 
       return this;
@@ -476,6 +505,7 @@ private static final long serialVersionUID = 0L;
     public com.akmade.common.proto.Msg buildPartial() {
       com.akmade.common.proto.Msg result = new com.akmade.common.proto.Msg(this);
       result.severity_ = severity_;
+      result.code_ = code_;
       result.message_ = message_;
       onBuilt();
       return result;
@@ -520,6 +550,9 @@ private static final long serialVersionUID = 0L;
       if (other == com.akmade.common.proto.Msg.getDefaultInstance()) return this;
       if (other.severity_ != 0) {
         setSeverityValue(other.getSeverityValue());
+      }
+      if (other.getCode() != 0L) {
+        setCode(other.getCode());
       }
       if (!other.getMessage().isEmpty()) {
         message_ = other.message_;
@@ -592,6 +625,32 @@ private static final long serialVersionUID = 0L;
     public Builder clearSeverity() {
       
       severity_ = 0;
+      onChanged();
+      return this;
+    }
+
+    private long code_ ;
+    /**
+     * <code>int64 code = 3;</code>
+     */
+    public long getCode() {
+      return code_;
+    }
+    /**
+     * <code>int64 code = 3;</code>
+     */
+    public Builder setCode(long value) {
+      
+      code_ = value;
+      onChanged();
+      return this;
+    }
+    /**
+     * <code>int64 code = 3;</code>
+     */
+    public Builder clearCode() {
+      
+      code_ = 0L;
       onChanged();
       return this;
     }
