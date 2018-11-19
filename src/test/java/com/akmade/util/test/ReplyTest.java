@@ -24,7 +24,7 @@ public class ReplyTest {
         assert(replyHasNoMessages(reply));
 
         try {
-            Reply<Integer> replyNull = Reply.of(null);
+            Reply.of(null);
         } catch (NullPointerException e) {
             assert(true);
         }
@@ -66,19 +66,19 @@ public class ReplyTest {
     public void emptyTest() {
         Reply<Integer> reply = Reply.empty();
         assertFalse(reply.isPresent());
-        assertTrue(reply.messages().size() == 1);
+        assertEquals(reply.messages().size(), 1);
         assertTrue(reply.messages().stream().anyMatch(m -> m.equals(Reply.EMPTY_MESSAGE)));
         assert(replyHasNoObject(reply));
 
         Msg error = MAKE_ERROR.apply("Error Message");
         Reply<Integer> reply2 = Reply.empty(error);
         assertFalse(reply2.isPresent());
-        assertTrue(reply2.messages().size() == 1);
+        assertEquals(reply2.messages().size(), 1);
         assertTrue(reply2.messages().stream().anyMatch(m -> m.equals(error)));
         assert(replyHasNoObject(reply2));
 
         Msg error2 =  MAKE_ERROR.apply("Error Message 2");
-        Collection<Msg> errors = new ArrayList<Msg>(){{add(error); add(error2);}};
+        Collection<Msg> errors = new ArrayList<>(){{add(error); add(error2);}};
         Reply<Integer> reply3 = Reply.empty(errors);
         assertFalse(reply3.isPresent());
         assertEquals(2, reply3.messages().size());
@@ -149,7 +149,7 @@ public class ReplyTest {
     public void messagesTest() {
         Msg error = MAKE_ERROR.apply("Error 1");
         Msg error2 = MAKE_ERROR.apply("Error 2");
-        Collection<Msg> messages = new ArrayList<Msg>(){{add(error); add(error2);}};
+        Collection<Msg> messages = new ArrayList<>(){{add(error); add(error2);}};
         Reply<Integer> reply = Reply.of(1);
         try {
             reply.messages();
@@ -174,14 +174,14 @@ public class ReplyTest {
 
         Reply<Integer> reply2 = Reply.empty();
         results = reply2.messages();
-        assertTrue(results.size() == 1);
+        assertEquals(results.size(), 1);
         assertTrue(results.stream().anyMatch(m -> m.equals(Reply.EMPTY_MESSAGE)));
 
         results = reply2.messagesOrElse(messages);
-        assertTrue(results.size() == 1);
+        assertEquals(results.size(), 1);
         assertTrue(results.stream().anyMatch(m -> m.equals(Reply.EMPTY_MESSAGE)));
         results = reply2.messagesOrElseGet(() -> messages);
-        assertTrue(results.size() == 1);
+        assertEquals(results.size(), 1);
         assertTrue(results.stream().anyMatch(m -> m.equals(Reply.EMPTY_MESSAGE)));
 
         Reply<Integer> reply3 = Reply.empty();
@@ -198,7 +198,7 @@ public class ReplyTest {
     public void ifPresentTest() {
         Consumer<Collection<Integer>> consumer = collection -> collection.add(5);
 
-        Reply<Collection<Integer>> reply = Reply.of(new ArrayList<Integer>() {{
+        Reply<Collection<Integer>> reply = Reply.of(new ArrayList<>() {{
             add(1);
             add(3);
         }});
@@ -214,8 +214,7 @@ public class ReplyTest {
     public void filterTest() {
         Msg error = MAKE_ERROR.apply("Error 1");
         Msg error2 = MAKE_ERROR.apply("Error 2");
-        Msg error3 = null;
-        Collection<Msg> messages = new ArrayList<Msg>(){{add(error); add(error2);}};
+        Collection<Msg> messages = new ArrayList<>(){{add(error); add(error2);}};
 
 
         Reply<Integer> reply = Reply.of(6);
@@ -223,7 +222,7 @@ public class ReplyTest {
         assertTrue(results.isPresent());
         Reply<Integer> results2 = reply.filter(i -> i%5==0);
         assertFalse(results2.isPresent());
-        assertTrue(results2.messages().size()==1);
+        assertEquals(results2.messages().size(),1);
         assertTrue(results2.messages().stream().anyMatch(m -> m.equals(Reply.EMPTY_MESSAGE)));
 
 
@@ -237,21 +236,21 @@ public class ReplyTest {
         assertTrue(results3.isPresent());
         Reply<Integer> results4 = reply.filter(i -> i%5==0, error);
         assertFalse(results4.isPresent());
-        assertTrue(results4.messages().size()==1);
+        assertEquals(results4.messages().size(),1);
         assertTrue(results4.messages().stream().anyMatch(m -> m.equals(error)));
 
 
         try {
-            reply.filter(i -> i%2==0, error3);
+            reply.filter(i -> i%2==0, error2);
         } catch (NullPointerException e ) {
             assert(true);
         }
 
         Reply<Integer> results5 = reply.filter(i -> i%2==0, messages);
-        assertTrue(results3.isPresent());
+        assertTrue(results5.isPresent());
         Reply<Integer> results6 = reply.filter(i -> i%5==0, messages);
         assertFalse(results6.isPresent());
-        assertTrue(results6.messages().size()==2);
+        assertEquals(results6.messages().size(),2);
         assertTrue(results6.messages().stream().anyMatch(m -> m.equals(error)));
         assertTrue(results6.messages().stream().anyMatch(m -> m.equals(error2)));
     }
@@ -264,7 +263,7 @@ public class ReplyTest {
         assertTrue(results.isPresent());
         Reply<Integer> results2 = Reply.<String>empty(error).map(mapper);
         assertFalse(results2.isPresent());
-        assertTrue(results2.messages().size() == 1);
+        assertEquals(results2.messages().size(), 1);
         assertTrue(results2.messages().stream().anyMatch(m -> m.equals(error)));
     }
 
@@ -292,7 +291,7 @@ public class ReplyTest {
 
         Reply<Integer> results3 = Reply.<String>empty().flatMap(mapper);
         assertFalse(results3.isPresent());
-        assertTrue(results3.messages().size() == 1);
+        assertEquals(results3.messages().size() , 1);
         assertTrue(results3.messages().stream().anyMatch(m -> m.equals(Reply.EMPTY_MESSAGE)));
     }
 
@@ -318,41 +317,40 @@ public class ReplyTest {
     @Test
     public void streamTest() {
         Reply<Integer> reply = Reply.of(1);
-        assertEquals((Integer)2, reply.stream().map(i -> i*2).findFirst().get());
+        assertEquals((Integer)2, reply.stream().map(i -> i*2).findFirst().orElse(null));
     }
 
     @Test
     public void ofOptional() {
-        Integer nullInt = null;
         Msg error = MAKE_ERROR.apply("Error 1");
         Msg error2 = MAKE_ERROR.apply("Error 2");
-        Collection<Msg> messages = new ArrayList<Msg>(){{add(error); add(error2);}};
+        Collection<Msg> messages = new ArrayList<>(){{add(error); add(error2);}};
 
         Reply<Integer> reply = Reply.ofOptional(Optional.of(3));
         assertTrue (reply.isPresent());
         assertEquals((Integer)3, reply.get());
 
-        reply = Reply.ofOptional(Optional.ofNullable(nullInt));
+        reply = Reply.ofOptional(Optional.empty());
         assertFalse(reply.isPresent());
-        assertTrue(reply.messages().size() == 1);
+        assertEquals(reply.messages().size(), 1);
         assertTrue(reply.messages().stream().anyMatch(m -> m.equals(Reply.EMPTY_MESSAGE)));
 
         reply = Reply.ofOptional(Optional.of(3), error);
         assertTrue (reply.isPresent());
         assertEquals((Integer)3, reply.get());
 
-        reply = Reply.ofOptional(Optional.ofNullable(nullInt),error);
+        reply = Reply.ofOptional(Optional.empty(),error);
         assertFalse(reply.isPresent());
-        assertTrue(reply.messages().size() == 1);
+        assertEquals(reply.messages().size(), 1);
         assertTrue(reply.messages().stream().anyMatch(m -> m.equals(error)));
 
         reply = Reply.ofOptional(Optional.of(3), messages);
         assertTrue (reply.isPresent());
         assertEquals((Integer)3, reply.get());
 
-        reply = Reply.ofOptional(Optional.ofNullable(nullInt),messages);
+        reply = Reply.ofOptional(Optional.empty(),messages);
         assertFalse(reply.isPresent());
-        assertTrue(reply.messages().size() == 2);
+        assertEquals(reply.messages().size(), 2);
         assertTrue(reply.messages().stream().anyMatch(m -> m.equals(error)));
         assertTrue(reply.messages().stream().anyMatch(m -> m.equals(error2)));
     }
