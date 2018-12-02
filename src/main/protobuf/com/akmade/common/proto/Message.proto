@@ -19,3 +19,7 @@ message Msg {
     int64 code = 3;
     string message = 2;
 }
+
+message MsgList {
+    repeated Msg messages = 1;
+}

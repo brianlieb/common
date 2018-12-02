@@ -2,6 +2,7 @@ package com.akmade.util;
 
 
 import com.akmade.common.proto.Msg;
+import com.akmade.common.proto.MsgList;
 import io.vavr.Function2;
 
 import java.util.ArrayList;
@@ -42,5 +43,10 @@ public class MessageUtility {
 
     public static final Function<String, Collection<Msg>> MAKE_INFOS =
             s -> makeMessages.apply(Msg.Severity.INFO, s);
+
+
+    public static final Function<Collection<Msg>, MsgList> MAKE_MSG_LIST =
+            msgs -> MsgList.newBuilder().addAllMessages(msgs).build();
+
 
 }

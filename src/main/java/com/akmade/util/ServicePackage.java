@@ -8,21 +8,31 @@ import java.util.Optional;
 
 public class ServicePackage<T> {
 
+    private static final Collection<Msg> EMPTY_MESSAGES = new ArrayList<>();
     T object;
-    Collection<Msg> msg = new ArrayList<>();
+    Collection<Msg> msg;
 
     private ServicePackage(T object, Collection<Msg> msg) {
         this.object = object;
         this.msg = msg;
     }
 
-    public static <X> ServicePackage<X> of(Reply<X> reply, X start) {
-        return new ServicePackage<>(reply.orElse(start), reply.messagesOrElse(new ArrayList<>()));
+    public static <X> ServicePackage<X> of (X object) {
+        return new ServicePackage<>(object, EMPTY_MESSAGES);
+    }
+
+    public static <X> ServicePackage<X> of (X object, Collection<Msg> messages) {
+        return new ServicePackage<>(object, messages);
+    }
+
+    public static <X> ServicePackage<X> ofReply(Reply<X> reply, X start) {
+        return new ServicePackage<>(reply.orElse(start), reply.messagesOrElse(EMPTY_MESSAGES));
     }
 
     public static <X> ServicePackage<X> ofOptional(Reply<Optional<X>> reply, X start) {
-        return new ServicePackage<>(reply.orElse(Optional.empty()).orElse(start), reply.messagesOrElse(new ArrayList<>()));
+        return new ServicePackage<>(reply.orElse(Optional.empty()).orElse(start), reply.messagesOrElse(EMPTY_MESSAGES));
     }
+
 
 
 
